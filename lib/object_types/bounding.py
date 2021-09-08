@@ -93,25 +93,21 @@ from typing import Tuple
 
 # static
 
-def boundaries(selection, active) -> Tuple[Vector, Vector]:
+def boundaries(obj) -> Tuple[Vector, Vector]:
     x = []
     y = []
     z = []
 
-    for obj in selection:
 
-        wm = transformation(active, obj)
+    wm = transformation(obj)
 
-        if active.shaper_orientation == 'global':
-            wm = obj.matrix_world
+    bb = obj.bound_box
+    for p in range(8):
+        v = wm @ Vector([bb[p][0], bb[p][1], bb[p][2]])
 
-        bb = obj.bound_box
-        for p in range(8):
-            v = wm @ Vector([bb[p][0], bb[p][1], bb[p][2]])
-
-            x.append(v[0])
-            y.append(v[1])
-            z.append(v[2])
+        x.append(v[0])
+        y.append(v[1])
+        z.append(v[2])
 
     minimum = Vector([min(x), min(y), min(z)])
     maximum = Vector([max(x), max(y), max(z)])

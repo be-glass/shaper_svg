@@ -38,10 +38,9 @@ class Export:
     def __init__(self, context) -> None:
 
         self.active = context.active_object
-        self.selected = context.selected_objects
         self.scene = context.scene
         scale = self.scene.unit_settings.scale_length
-        min, max = boundaries(self.selected, self.active)
+        min, max = boundaries(self.active)
         self.xyz_min: Vector = 1000 * scale * min
         self.xyz_max: Vector = 1000 * scale * max
         self.w = (self.xyz_max.x - self.xyz_min.x)
@@ -49,10 +48,7 @@ class Export:
         self.version = '.'.join([str(i) for i in bl_info['version']])
         self.unit = LENGTH_UNIT
 
-
     def run(self) -> Union[str, bool]:
-        if not self.selected:
-            return "Nothing to export"
 
         if self.active.shaper_orientation == 'object' and not self.active.orientation_object:
             return "Orientation object missing"
@@ -69,7 +65,8 @@ class Export:
     def svg_top(self) -> str:
         return '\n'.join([
             self.svg_header(),
-            self.svg_body(),
+            self.svg_boundary_guide(),
+            self.svg_exterior_loops(),
             self.svg_footer()
         ])
 
@@ -83,12 +80,6 @@ class Export:
     def svg_footer(self) -> str:
         return '</svg>\n'
 
-    def svg_body(self) -> str:
-        return \
-            self.svg_boundary_guide() + '\n' + \
-            '\n'.join([self.svg_exterior_loops(item) for item in self.selected])
-
-
     def svg_boundary_guide(self) -> str:
         return SVG_RECTANGLE.format(
             x=self.xyz_min.x, y=self.xyz_min.y,
@@ -97,15 +88,17 @@ class Export:
             unit=self.unit,
         )
 
-    def svg_exterior_loops(self, item) -> str:
-        wm = transformation(self.active, item)
-        loops = find_loops(item)
+    def svg_exterior_loops(self) -> str:
+        item = self.active
+        wm = transformation(item)
+        z = self.xyz_max.z
+        loops = find_loops(item, self.xyz_max.z, wm)
 
         points = []
         for loop in loops.values():
             coords = [wm @ item.data.vertices[vid].co for vid in loop]
-            points.append(' '.join(['{x:.2f},{y:.2f}'.format(x=v.x, y=v.y ) for v in coords]))
+            # points.append(' '.join(['{x:.2f},{y:.2f},{z:.2f}'.format(x=v.x, y=v.y, z=v.z) for v in coords]))
+            points.append(' '.join(['{x:.2f},{y:.2f}'.format(x=v.x, y=v.y) for v in coords]))
+
 
         return '\n'.join([SVG_POLYGON.format(points=points, style=STYLE_CUT) for points in points])
-
-

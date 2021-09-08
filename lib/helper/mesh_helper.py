@@ -40,16 +40,17 @@ def horizontal_edges(item: Object) -> dict:
     return horizontal_edges
 
 
-def horizontal_polygons(item: Object) -> list:
-    horizontal_polygons = []
+def horizontal_polygons(item, z_select, wm) -> list:
+    polygons = []
     for polygon in item.data.polygons:
-        zz = [item.data.vertices[vid].co.z for vid in polygon.vertices]
+        zz = [(wm @ item.data.vertices[vid].co).z for vid in polygon.vertices]
 
         if abs( max(zz) - min(zz)) < TOLERANCE:
             z = round(mean(zz), PRECISION)
-            horizontal_polygons.append(polygon)
+            if abs(z-z_select) < TOLERANCE:
+                polygons.append(polygon)
 
-    return horizontal_polygons
+    return polygons
 
 
 
@@ -128,8 +129,8 @@ def create_lut_polygon_to_vertices(polygons: object) -> dict:
     return polygon2vertices
 
 
-def find_loops(item: object) -> dict:
-    polygons = horizontal_polygons(item)
+def find_loops(item, z_select, wm) -> dict:
+    polygons = horizontal_polygons(item, z_select, wm)
     lut_poly_vertex = create_lut_polygon_to_vertices(polygons)
     lut_edge_poly = create_lut_edge_to_polygons(polygons)
     lut_poly_poly = {p.index: p.index for p in polygons}
@@ -162,10 +163,10 @@ def find_loops(item: object) -> dict:
     return {k: v for k, v in lut_poly_vertex.items() if v}
 
 
-def transformation(active, obj) -> Matrix:
-    if active.shaper_orientation == 'global':
+def transformation(obj) -> Matrix:
+    if obj.shaper_orientation == 'global':
         return obj.matrix_world
-    elif active.shaper_orientation == 'object' and active.orientation_object:
-        return active.orientation_object.matrix_world
+    elif obj.shaper_orientation == 'object' and obj.orientation_object:
+        return obj.orientation_object.matrix_world
     else:
-        return Matrix()  # 'local'
+        return Matrix()  # 'local'   # TODO
