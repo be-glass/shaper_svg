@@ -1,4 +1,3 @@
-
 #  This file is part of Blender_Shaper_Origin.
 #
 #  Blender_Shaper_Origin is free software: you can redistribute it and/or modify
@@ -16,7 +15,8 @@
 
 LENGTH_UNIT = "mm"
 
-
+PRECISION = 3
+TOLERANCE = 10 ** -PRECISION
 
 # FACE_COLOR = {
 #     'Cutout': (1, 1, 1, 1),
@@ -65,13 +65,14 @@ xml:space="preserve" style="background-color:#d0d0d0" stroke-width="5%"
 width="{width:.2f}{unit}" height="{height:.2f}{unit}"          
 viewBox="{x0:.2f} {y0:.2f} {w:.2f} {h:.2f}">
 '''
-SVG_RECTANGLE = '''\
-<rect x="{x}" y="{y}" width="{width:.2f}" height="{height:.2f}" style="{style}"/>'
-'''
+SVG_RECTANGLE = '<rect x="{x}" y="{y}" width="{width:.2f}" height="{height:.2f}" style="{style}" />'
+SVG_POLYGON = '<polygon points="{points}" style="{style}" />'
 
 STYLE_GUIDE = "stroke:blue;fill:none;stroke-width:1pt"
-# STYLE_GUIDE = "fill:blue"
+STYLE_CUT = "stroke:purple;fill:none;stroke-width:1pt"
 
+
+# STYLE_GUIDE = "fill:blue"
 
 
 #

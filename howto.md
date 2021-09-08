@@ -1,0 +1,2 @@
+- [Howto install remote debugging](https://code.blender.org/2015/10/debugging-python-code-with-pycharm)
+- [Setup add-on development](https://github.com/ranjian0/Blender-PyCharm)

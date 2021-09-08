@@ -14,9 +14,9 @@
 #   along with Blender_Shaper_Origin.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-import bpy
-from mathutils import Matrix, Vector
-from typing import List, Tuple
+from lib.helper.mesh_helper import transformation
+from mathutils import Vector
+from typing import Tuple
 
 # from .reference import Reference
 # from ..blender.compartment import Compartment, Collect
@@ -98,12 +98,9 @@ def boundaries(selection, active) -> Tuple[Vector, Vector]:
     y = []
     z = []
 
-    if active.shaper_orientation == 'object' and active.orientation_object:
-        wm = active.orientation_object.matrix_world
-    else:
-        wm = Matrix()        # 'local'
-
     for obj in selection:
+
+        wm = transformation(active, obj)
 
         if active.shaper_orientation == 'global':
             wm = obj.matrix_world
@@ -119,3 +116,5 @@ def boundaries(selection, active) -> Tuple[Vector, Vector]:
     minimum = Vector([min(x), min(y), min(z)])
     maximum = Vector([max(x), max(y), max(z)])
     return minimum, maximum
+
+
