@@ -13,20 +13,10 @@
 #  You should have received a copy of the GNU General Public License
 #  along with Blender_Shaper_Origin.  If not, see <https://www.gnu.org/licenses/>.
 
-# import bmesh
-# import bpy
-#
-# from .other import select_active, active_object
+from collections import deque
 
-from mathutils import Matrix
+class Shape(list):
+    pass
 
 
 
-
-def transformation(obj) -> Matrix:
-    if obj.shaper_orientation == 'global':
-        return obj.matrix_world
-    elif obj.shaper_orientation == 'object' and obj.orientation_object:
-        return obj.orientation_object.matrix_world
-    else:
-        return Matrix()  # 'local'   # TODO

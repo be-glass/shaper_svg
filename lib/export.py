@@ -17,8 +17,9 @@
 from typing import Union  # , List, Tuple, Set
 
 from mathutils import Vector
+from .Contour import Contour
 from .constant import SVG_HEADER, SVG_RECTANGLE, LENGTH_UNIT, STYLE_GUIDE, SVG_POLYGON, STYLE_CUT
-from .helper.mesh_helper import find_loops, transformation
+from .helper.mesh_helper import transformation
 from ..__init__ import bl_info
 from .helper.other import write
 from .object_types.bounding import boundaries
@@ -92,7 +93,7 @@ class Export:
         item = self.active
         wm = transformation(item)
         z = self.xyz_max.z
-        loops = find_loops(item, self.xyz_max.z, wm)
+        loops = Contour(item, self.xyz_max.z, wm).get_loops()
 
         points = []
         for loop in loops.values():

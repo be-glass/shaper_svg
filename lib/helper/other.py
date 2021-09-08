@@ -241,3 +241,5 @@ def write(content, file_name) -> str:
 #     matrix = quat.to_matrix().to_4x4()
 #     matrix.translation = center
 #     return matrix
+def clean_dictionary(dictionary: Object) -> dict:
+    return {k: v for k, v in dictionary if v}
