@@ -13,29 +13,36 @@
 #  You should have received a copy of the GNU General Public License
 #  along with Blender_Shaper_Origin.  If not, see <https://www.gnu.org/licenses/>.
 
-from collections import deque
-
+from typing import List
 
 class Shape(list):
 
     def clean(self):
 
-        loop0 = self
-        loop = loop0 + loop0[0:2]
+        shape = self
+        shape1 = Shape([])
+        for i in shape.range():
+            if shape.mod(i-1) != shape.mod(i+1):
+                shape1.append(shape[i])
 
-        clean_shape = Shape([])
-        for i in range(len(loop0)):
-            clean_shape.append(loop[i])
-            if loop[i] == loop[i + 2]:
-                i += 2
+        shape2 = Shape([])
+        for i in shape1.range():
+            if shape1[i] != shape1.mod(i+1):
+                shape2.append(shape1[i])
 
-        return clean_shape
+        return shape2
+
+    def mod(self, i):
+        return self[i % len(self)]
+
+    def range(self):
+        return range(len(self))
 
     def delete_at(self, i: int):
         return Shape(self[i + 1:] + self[:i])
 
     def concat(self, b):
-        return Shape(self+b)
+        return Shape(self + b)
 
     def edge_index(self, edge_tuple, reverse=False):
         shape = self
@@ -47,18 +54,20 @@ class Shape(list):
         if length < 2:
             return -1
 
-        shapeA = shape[length - 1:] + shape[:length - 1]
-        shapeB = shape[1:] + shape[0:1]
-
-        search0 = [1 if edge[0] == k else 0 for k in shape]
-        search1a = [1 if edge[1] == k else 0 for k in shapeA]
-        search1b = [1 if edge[1] == k else 0 for k in shapeB]
+        search0 = shape.find_value(edge[0])
+        search1 = shape.find_value(edge[1])
 
         search = []
         for i in range(length):
-            search.append(search0[i] + search1a[i] + search1b[i])
+            search.append(search0[i]
+                          + search1[(i - 1) % length]
+                          + search1[(i + 1) % length]
+                          )
 
         if 2 not in search:
             return -1
 
         return search.index(2)
+
+    def find_value(self, value) -> List[int]:
+        return [1 if value == k else 0 for k in self]
