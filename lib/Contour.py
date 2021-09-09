@@ -19,6 +19,8 @@ from lib.constant import TOLERANCE, PRECISION
 
 from lib.helper.other import clean_dictionary
 
+from typing import Dict, List
+
 
 class Contour:
     def __init__(self, item, z, wm) -> None:
@@ -26,73 +28,62 @@ class Contour:
         self.z = z
         self.wm = wm
         polygons = self.get_horizontal_polygons()
-        self.lut_poly_shape = create_lut_polygon_to_vertices(polygons)
-        self.lut_edge_poly = create_lut_edge_to_polygons(polygons)
-        self.lut_poly_poly = {p.index: p.index for p in polygons}
+        self.lut_poly_shape: Dict[int, Shape] = create_lut_polygon_to_vertices(polygons)
+        self.lut_edge_shapeId: Dict[tuple, int] = self.create_lut_edge_to_shapeId(polygons)
 
     def get_loops(self) -> dict:
 
-        for edge, poly_ids in self.lut_edge_poly.items():
+        for edge, poly_ids in self.lut_edge_shapeId.items():
             if len(poly_ids) == 2:
-                p0 = self.lut_poly_poly[poly_ids[0]]
-                p1 = self.lut_poly_poly[poly_ids[1]]
+                p0 = poly_ids[0]
+                p1 = poly_ids[1]
 
                 if p0 != p1:
                     self.merge_adjacent_coplanar_polygons(edge, p0, p1)
-                    self.remove_double_paths(p0)
+                    self.clean_poly(p0)
 
         return clean_dictionary(self.lut_poly_shape.items())
 
-    def remove_double_paths(self, p) -> None:
-
-        loop0 = self.lut_poly_shape[p]
-        loop = loop0 + loop0[0:2]
-
-        clean_loop = []
-        for i in range(len(loop0)):
-            clean_loop.append(loop[i])
-            if loop[i] == loop[i+2]:
-                i += 2
-
-        self.lut_poly_shape[p] = clean_loop
-
+    def clean_poly(self, p) -> None:
+        self.lut_poly_shape[p]: Shape = self.lut_poly_shape[p].clean()
 
     def merge_adjacent_coplanar_polygons(self, edge, p0, p1) -> None:
 
+        shape0: Shape = self.lut_poly_shape[p0]
+        shape1: Shape = self.lut_poly_shape[p1]
 
-        loop0 = self.lut_poly_shape[p0]
-        loop1 = self.lut_poly_shape[p1]
-
-        keep0 = loop0
-        keep1 = loop1
+        if p0 != p1:
 
 
 
-        i0 = self.index_edge_in_poly(edge, loop0)
-        i1 = self.index_edge_in_poly(edge[::-1], loop1)
+            i0 = self.index_edge_in_shape(edge, shape0)
+            i1 = self.index_edge_in_shape(edge[::-1], shape1)
 
-        if i0 < 0 or i1 < 0:
-            return
+            if i0 < 0 or i1 < 0:
+                return
 
-        # loop = loop_remove
+            shape0 = shape0.delete_at(i0)
+            shape1 = shape1.delete_at(i1)
 
-        loop0 = loop0[i0 + 1:] + loop0[:i0]
-        loop1 = loop1[i1 + 1:] + loop1[:i1]
+            self.lut_poly_shape[p0] = shape0.concat(shape1)
+            self.lut_poly_shape[p1] = Shape([])
 
-        self.lut_poly_shape[p0] = loop0 + loop1
-        self.lut_poly_shape[p1] = []
+            self.replace_index(p0, p1)
+            pass
 
-        keep = self.lut_poly_shape[p0]
+    def replace_index(self, p0, p1):
+        for edge, shape in self.lut_edge_shapeId.items():
+            self.lut_edge_shapeId[edge] = [p0 if v == p1 else v for v in shape]
 
-        self.lut_poly_poly[p1] = p0
 
-    def index_edge_in_poly(self, edge, loop):
+
+    def index_edge_in_shape(self, edge, loop):
 
         length = len(loop)
         if length < 2:
             return -1
 
-        loopa = loop[length - 1:] + loop[:length-1]
+        loopa = loop[length - 1:] + loop[:length - 1]
         loopb = loop[1:] + loop[0:1]
 
         search0 = [1 if edge[0] == k else 0 for k in loop]
@@ -101,20 +92,12 @@ class Contour:
 
         search = []
         for i in range(length):
-            a = search0[i]
-            b = search1a[i]
-            c = search1b[i]
-
             search.append(search0[i] + search1a[i] + search1b[i])
-            
+
         if 2 not in search:
             return -1
-        
+
         return search.index(2)
-        
-
-
-
 
     def get_horizontal_polygons(self) -> list:
         shapes = []
@@ -128,16 +111,14 @@ class Contour:
 
         return shapes
 
-
-def create_lut_edge_to_polygons(polygons: object) -> dict:
-    edge2polygons = {}
-    for p in polygons:
-        for edge in p.edge_keys:
-            if edge not in edge2polygons:
-                edge2polygons[edge] = []
-
-            edge2polygons[edge].append(p.index)
-    return edge2polygons
+    def create_lut_edge_to_shapeId(self, polygons: object) -> dict:
+        edge2shape = {}
+        for p in polygons:
+            for edge in p.edge_keys:
+                if edge not in edge2shape:
+                    edge2shape[edge] = Shape([])
+                edge2shape[edge].append(p.index)
+        return edge2shape
 
 
 def create_lut_polygon_to_vertices(polygons: object) -> dict:

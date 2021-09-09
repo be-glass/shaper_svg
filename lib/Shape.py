@@ -15,8 +15,25 @@
 
 from collections import deque
 
+
 class Shape(list):
-    pass
 
+    def clean(self):
 
+        loop0 = self
+        loop = loop0 + loop0[0:2]
+
+        clean_shape = Shape([])
+        for i in range(len(loop0)):
+            clean_shape.append(loop[i])
+            if loop[i] == loop[i + 2]:
+                i += 2
+
+        return clean_shape
+
+    def delete_at(self, i: int):
+        return Shape(self[i + 1:] + self[:i])
+
+    def concat(self, b):
+        return Shape(self+b)
 
