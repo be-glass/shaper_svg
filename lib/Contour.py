@@ -54,10 +54,8 @@ class Contour:
 
         if p0 != p1:
 
-
-
-            i0 = self.index_edge_in_shape(edge, shape0)
-            i1 = self.index_edge_in_shape(edge[::-1], shape1)
+            i0 = shape0.edge_index(edge)
+            i1 = shape1.edge_index(edge, reverse=True)
 
             if i0 < 0 or i1 < 0:
                 return
@@ -77,27 +75,6 @@ class Contour:
 
 
 
-    def index_edge_in_shape(self, edge, loop):
-
-        length = len(loop)
-        if length < 2:
-            return -1
-
-        loopa = loop[length - 1:] + loop[:length - 1]
-        loopb = loop[1:] + loop[0:1]
-
-        search0 = [1 if edge[0] == k else 0 for k in loop]
-        search1a = [1 if edge[1] == k else 0 for k in loopa]
-        search1b = [1 if edge[1] == k else 0 for k in loopb]
-
-        search = []
-        for i in range(length):
-            search.append(search0[i] + search1a[i] + search1b[i])
-
-        if 2 not in search:
-            return -1
-
-        return search.index(2)
 
     def get_horizontal_polygons(self) -> list:
         shapes = []

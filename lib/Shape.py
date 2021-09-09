@@ -37,3 +37,28 @@ class Shape(list):
     def concat(self, b):
         return Shape(self+b)
 
+    def edge_index(self, edge_tuple, reverse=False):
+        shape = self
+        edge = list(edge_tuple)
+        if reverse:
+            edge.reverse()
+
+        length = len(shape)
+        if length < 2:
+            return -1
+
+        shapeA = shape[length - 1:] + shape[:length - 1]
+        shapeB = shape[1:] + shape[0:1]
+
+        search0 = [1 if edge[0] == k else 0 for k in shape]
+        search1a = [1 if edge[1] == k else 0 for k in shapeA]
+        search1b = [1 if edge[1] == k else 0 for k in shapeB]
+
+        search = []
+        for i in range(length):
+            search.append(search0[i] + search1a[i] + search1b[i])
+
+        if 2 not in search:
+            return -1
+
+        return search.index(2)
