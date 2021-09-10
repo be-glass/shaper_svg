@@ -14,7 +14,6 @@
 #   along with Blender_Shaper_Origin.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-from lib.helper.mesh_helper import transformation
 from mathutils import Vector
 from typing import Tuple
 
@@ -93,28 +92,24 @@ from typing import Tuple
 
 # static
 
-def boundaries(selection, active) -> Tuple[Vector, Vector]:
+def boundaries(context, obj, wm) -> Tuple[Vector, Vector]:
     x = []
     y = []
     z = []
+    scale = context.scene.unit_settings.scale_length
 
-    for obj in selection:
+    bb = obj.bound_box
+    for p in range(8):
+        v = wm @ Vector([bb[p][0], bb[p][1], bb[p][2]])
 
-        wm = transformation(active, obj)
+        x.append(v[0])
+        y.append(v[1])
+        z.append(v[2])
 
-        if active.shaper_orientation == 'global':
-            wm = obj.matrix_world
+    mini =  1000 * scale * Vector([min(x), min(y), min(z)])
+    maxi = 1000 * scale * Vector([max(x), max(y), max(z)])
 
-        bb = obj.bound_box
-        for p in range(8):
-            v = wm @ Vector([bb[p][0], bb[p][1], bb[p][2]])
+    return mini, maxi
 
-            x.append(v[0])
-            y.append(v[1])
-            z.append(v[2])
-
-    minimum = Vector([min(x), min(y), min(z)])
-    maximum = Vector([max(x), max(y), max(z)])
-    return minimum, maximum
 
 
