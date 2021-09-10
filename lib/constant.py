@@ -75,6 +75,13 @@ STROKE_RED = "stroke:red;fill:none"
 STROKE_GREEN = "stroke:green;fill:none"
 STROKE_BLUE = "stroke:blue;fill:none"
 
+EXTERIOR_CUT = "stroke:black;fill:black"
+INTERIOR_CUT = "stroke:black;fill:white"
+POCKETING_CUT = "fill:grey;stroke:None"
+
+
+
+SHAPER_MAX_DEPTH = 30.0 # mm
 
 # STYLE_GUIDE = "fill:blue"
 

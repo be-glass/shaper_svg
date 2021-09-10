@@ -14,7 +14,6 @@
 #   along with Blender_Shaper_Origin.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-from lib.helper.mesh_helper import transformation
 from mathutils import Vector
 from typing import Tuple
 
@@ -93,13 +92,11 @@ from typing import Tuple
 
 # static
 
-def boundaries(context, obj) -> Tuple[Vector, Vector]:
+def boundaries(context, obj, wm) -> Tuple[Vector, Vector]:
     x = []
     y = []
     z = []
     scale = context.scene.unit_settings.scale_length
-
-    wm = transformation(obj)
 
     bb = obj.bound_box
     for p in range(8):

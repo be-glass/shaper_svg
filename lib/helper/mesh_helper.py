@@ -18,18 +18,3 @@
 #
 # from .other import select_active, active_object
 
-from mathutils import Matrix
-
-
-
-
-def transformation(obj) -> Matrix:
-    if obj.shaper_orientation == 'global':
-        return obj.matrix_world
-    elif obj.shaper_orientation == 'object' and obj.orientation_object:
-        rwm = obj.orientation_object.matrix_world.copy()
-        rwm.invert()
-        return rwm @ obj.matrix_world
-
-    else:
-        return Matrix()

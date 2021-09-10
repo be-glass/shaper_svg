@@ -14,10 +14,10 @@
 #  along with Blender_Shaper_Origin.  If not, see <https://www.gnu.org/licenses/>.
 from statistics import mean
 
-from lib.Shape import Shape
-from lib.constant import TOLERANCE, PRECISION
+from .Shape import Shape
+from .constant import TOLERANCE, PRECISION
 
-from lib.helper.other import clean_dictionary
+from .helper.other import clean_dictionary
 
 from typing import Dict, List
 
