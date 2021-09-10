@@ -77,16 +77,20 @@ class Contour:
 
 
     def get_horizontal_polygons(self) -> list:
-        shapes = []
+        polygons = []
+
+        if self.item.type != 'MESH':
+            return polygons
+
         for polygon in self.item.data.polygons:
             zz = [(self.wm @ self.item.data.vertices[vid].co).z for vid in polygon.vertices]
 
             if abs(max(zz) - min(zz)) < TOLERANCE:
                 z = round(mean(zz), PRECISION)
                 if abs(z - self.z) < TOLERANCE:
-                    shapes.append(polygon)
+                    polygons.append(polygon)
 
-        return shapes
+        return polygons
 
     def create_lut_edge_to_shapeId(self, polygons: object) -> dict:
         edge2shape = {}

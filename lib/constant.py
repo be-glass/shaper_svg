@@ -61,15 +61,19 @@ SVG_HEADER = '''\
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Blender SVG Export by {author} v{version})  -->
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
-xml:space="preserve" style="background-color:#d0d0d0" stroke-width="5%"
+xml:space="preserve" style="background-color:#d0d0d0" stroke-width="1%"
 width="{width:.2f}{unit}" height="{height:.2f}{unit}"          
 viewBox="{x0:.2f} {y0:.2f} {w:.2f} {h:.2f}">
 '''
 SVG_RECTANGLE = '<rect x="{x}" y="{y}" width="{width:.2f}" height="{height:.2f}" style="{style}" />'
 SVG_POLYGON = '<polygon points="{points}" style="{style}" />'
+SVG_LINE = '<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="{style}" />'
 
-STYLE_GUIDE = "stroke:blue;fill:none;stroke-width:1pt"
-STYLE_CUT = "stroke:purple;fill:none;stroke-width:1pt"
+STYLE_GUIDE = "stroke:blue;fill:none"
+STYLE_CUT = "stroke:purple;fill:none"
+STROKE_RED = "stroke:red;fill:none"
+STROKE_GREEN = "stroke:green;fill:none"
+STROKE_BLUE = "stroke:blue;fill:none"
 
 
 # STYLE_GUIDE = "fill:blue"

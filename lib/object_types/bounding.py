@@ -93,11 +93,11 @@ from typing import Tuple
 
 # static
 
-def boundaries(obj) -> Tuple[Vector, Vector]:
+def boundaries(context, obj) -> Tuple[Vector, Vector]:
     x = []
     y = []
     z = []
-
+    scale = context.scene.unit_settings.scale_length
 
     wm = transformation(obj)
 
@@ -109,8 +109,10 @@ def boundaries(obj) -> Tuple[Vector, Vector]:
         y.append(v[1])
         z.append(v[2])
 
-    minimum = Vector([min(x), min(y), min(z)])
-    maximum = Vector([max(x), max(y), max(z)])
-    return minimum, maximum
+    mini =  1000 * scale * Vector([min(x), min(y), min(z)])
+    maxi = 1000 * scale * Vector([max(x), max(y), max(z)])
+
+    return mini, maxi
+
 
 
