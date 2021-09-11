@@ -52,16 +52,17 @@ class BG_PT_Shaper_SVG(Shaper_Panel):
 
         # soc = context.scene.so_cut
         obj = context.object
-        scene = context.scene
 
-        # Widgets
-        layout.prop(obj, "shaper_orientation")
+        if obj and obj.type != 'MESH':
+            layout.label(text="Select a mesh object.")
 
-        if obj:
+        else:
+            # Widgets
+
+            layout.label(text=obj.name)
+            layout.prop(obj, "shaper_orientation")
 
             if obj.shaper_orientation == "object":
                 layout.prop(obj, "orientation_object")
-                layout.label(text="hi")
 
             layout.operator("mesh.shaper_export_svg", text="Export Cuts")
-            layout.label(text=obj.name)

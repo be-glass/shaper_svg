@@ -64,20 +64,35 @@ SVG_HEADER = '''\
 xml:space="preserve" style="background-color:#d0d0d0" stroke-width="1%"
 width="{width:.2f}{unit}" height="{height:.2f}{unit}"          
 viewBox="{x0:.2f} {y0:.2f} {w:.2f} {h:.2f}">
+<g>
 '''
+SVG_FOOTER = '</g></svg>\n'
+
 SVG_RECTANGLE = '<rect id="{id}" x="{x}" y="{y}" width="{width:.2f}" height="{height:.2f}" style="{style}" />'
-SVG_POLYGON = '<polygon id="{id}" points="{points}" style="{style}" />'
+SVG_PATH = '<path id="{id}" d="M{points}Z" style="{style}" />'
+
+SVG_PATH = '<path fill="{fill}" stroke="{stroke}" d="M{points}Z" />'
+
+
 SVG_LINE = '<line id="{id}" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="{style}" />'
 
-STYLE_GUIDE = "stroke:blue;fill:none"
-STYLE_CUT = "stroke:purple;fill:none"
-STROKE_RED = "stroke:red;fill:none"
-STROKE_GREEN = "stroke:green;fill:none"
-STROKE_BLUE = "stroke:blue;fill:none"
+# STYLE_GUIDE = "stroke:blue;fill:none"
+# STYLE_CUT = "stroke:purple;fill:none"
+# STROKE_RED = "stroke:#ff0000;fill:none"
+# STROKE_GREEN = "stroke:#00ff00;fill:none"
+# STROKE_BLUE = "stroke:#0000ff;fill:none"
+#
+# EXTERIOR_CUT = "stroke:#000000;fill:#000000"
+# INTERIOR_CUT = "stroke:#000000;fill:#ffffff"
+# POCKETING_CUT = "fill:#7f7f7f;stroke:None"
 
-EXTERIOR_CUT = "stroke:black;fill:black"
-INTERIOR_CUT = "stroke:black;fill:white"
-POCKETING_CUT = "fill:grey;stroke:None"
+RED="#ff0000"
+GREEN="#00ff00"
+BLUE="#0000ff"
+GREY="#7f7f7f"
+BLACK="#000000"
+WHITE="#ffffff"
+
 
 
 

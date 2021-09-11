@@ -16,8 +16,9 @@ import os
 from typing import Union
 
 from .Contour import Contour
-from .constant import SVG_HEADER, SVG_RECTANGLE, LENGTH_UNIT, STYLE_GUIDE, SVG_POLYGON, STYLE_CUT, SVG_LINE, \
-    STROKE_BLUE, STROKE_RED, STROKE_GREEN, SHAPER_MAX_DEPTH, EXTERIOR_CUT, INTERIOR_CUT, POCKETING_CUT
+from .constant import SVG_HEADER, SVG_RECTANGLE, LENGTH_UNIT, SVG_PATH, SVG_LINE, \
+    SVG_FOOTER, RED, GREEN, BLUE, BLACK, GREY, WHITE
+# STROKE_BLUE, STROKE_RED, STROKE_GREEN, SHAPER_MAX_DEPTH, EXTERIOR_CUT, INTERIOR_CUT, POCKETING_CUT, \
 from ..__init__ import bl_info
 from .helper.other import write
 from .object_types.bounding import boundaries
@@ -88,7 +89,8 @@ class Export:
     def svg_top(self) -> str:
         return '\n'.join([
             self.svg_header(),
-            self.svg_boundary_guide(),
+            # self.svg_boundary_guide(),
+            self.svg_origin(),
             self.svg_exterior_loops(),
             self.svg_interior_loops(),
             self.svg_footer()
@@ -107,32 +109,40 @@ class Export:
         )
 
     def svg_footer(self) -> str:
-        return '</svg>\n'
+        return SVG_FOOTER
 
-    def svg_boundary_guide(self) -> str:
-        return \
-            SVG_RECTANGLE.format(
-                id='boundary',
-                x=self.piece_min.x, y=-self.piece_max.y,
-                width=self.w, height=self.h,
-                style=STROKE_BLUE,
-            ) + \
-            SVG_LINE.format(
-                id='x-axis',
-                x1=self.piece_min.x - self.tick,
-                x2=self.piece_max.x + self.tick,
-                y1=0,
-                y2=0,
-                style=STROKE_RED
-            ) + \
-            SVG_LINE.format(
-                id='y-axis',
-                x1=0,
-                x2=0,
-                y1=-self.piece_min.y + self.tick,
-                y2=-self.piece_max.y - self.tick,
-                style=STROKE_GREEN
-            )
+    def svg_origin(self) -> str:
+        return SVG_PATH.format(
+            id='origin',
+            points=f"0,0 {self.tick},0 0,{-2*self.tick}",
+            fill=RED,
+            stroke=RED
+        )
+
+    # def svg_boundary_guide(self) -> str:
+    #     return \
+    #         SVG_RECTANGLE.format(
+    #             id='boundary',
+    #             x=self.piece_min.x, y=-self.piece_max.y,
+    #             width=self.w, height=self.h,
+    #             style=STROKE_BLUE,
+    #         ) + \
+    #         SVG_LINE.format(
+    #             id='x-axis',
+    #             x1=self.piece_min.x - self.tick,
+    #             x2=self.piece_max.x + self.tick,
+    #             y1=0,
+    #             y2=0,
+    #             style=STROKE_RED
+    #         ) + \
+    #         SVG_LINE.format(
+    #             id='y-axis',
+    #             x1=0,
+    #             x2=0,
+    #             y1=-self.piece_min.y + self.tick,
+    #             y2=-self.piece_max.y - self.tick,
+    #             style=STROKE_GREEN
+    #         )
 
     def svg_exterior_loops(self) -> str:
 
@@ -145,10 +155,11 @@ class Export:
             coords = [self.piece_wm @ item.data.vertices[vid].co for vid in loop]
             points.append(' '.join(['{x:.2f},{y:.2f}'.format(x=v.x, y=-v.y) for v in coords]))
 
-        return '\n'.join([SVG_POLYGON.format(
+        return '\n'.join([SVG_PATH.format(
             id=item.name,
             points=points,
-            style=EXTERIOR_CUT
+            fill=BLACK,
+            stroke=BLACK
         ) for points in points])
 
 
@@ -192,17 +203,24 @@ class Export:
                             coords = [cut_wm @ evaluated_item.data.vertices[vid].co for vid in loop]
 
                             points = ' '.join(['{x:.2f},{y:.2f}'.format(x=v.x, y=-v.y) for v in coords])
-                            cut_type = POCKETING_CUT if mini.z > self.piece_min.z else INTERIOR_CUT
+
+                            if mini.z > self.piece_min.z:   # POCKETING CUT
+                                fill = GREY
+                                stroke = GREY
+                            else:   # INTERIOR CUT
+                                fill = WHITE
+                                stroke = BLACK
 
                             name = f"{evaluated_item.name}({cut_depth})"
                             if loop_id > 0:
                                 name += f".{loop_id}"
                             loop_id += 1
 
-                            svg += SVG_POLYGON.format(
+                            svg += SVG_PATH.format(
                                 id=name,
                                 points=points,
-                                style=cut_type
+                                fill=fill,
+                                stroke=stroke
                             ) + '\n'
 
         return svg
