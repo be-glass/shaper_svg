@@ -112,11 +112,13 @@ class Export:
     def svg_boundary_guide(self) -> str:
         return \
             SVG_RECTANGLE.format(
+                id='boundary',
                 x=self.piece_min.x, y=-self.piece_max.y,
                 width=self.w, height=self.h,
                 style=STROKE_BLUE,
             ) + \
             SVG_LINE.format(
+                id='x-axis',
                 x1=self.piece_min.x - self.tick,
                 x2=self.piece_max.x + self.tick,
                 y1=0,
@@ -124,6 +126,7 @@ class Export:
                 style=STROKE_RED
             ) + \
             SVG_LINE.format(
+                id='y-axis',
                 x1=0,
                 x2=0,
                 y1=-self.piece_min.y + self.tick,
@@ -142,22 +145,12 @@ class Export:
             coords = [self.piece_wm @ item.data.vertices[vid].co for vid in loop]
             points.append(' '.join(['{x:.2f},{y:.2f}'.format(x=v.x, y=-v.y) for v in coords]))
 
-        return '\n'.join([SVG_POLYGON.format(points=points, style=EXTERIOR_CUT) for points in points])
+        return '\n'.join([SVG_POLYGON.format(
+            id=item.name,
+            points=points,
+            style=EXTERIOR_CUT
+        ) for points in points])
 
-    def transformation(self, cut_obj=None) -> Matrix:
-
-        obj = cut_obj if cut_obj else self.piece
-
-        if self.piece.shaper_orientation == 'global':
-            return obj.matrix_world
-
-        elif self.piece.shaper_orientation == 'object' and self.piece.orientation_object:
-            rwm = self.piece.orientation_object.matrix_world.copy()
-            rwm.invert()
-            return rwm @ obj.matrix_world
-
-        else:
-            return Matrix()
 
     def svg_interior_loops(self) -> str:
 
@@ -190,14 +183,42 @@ class Export:
 
                     if mini.z < self.piece_max.z < maxi.z:
 
+                        cut_depth = round(self.piece_max.z - mini.z, 1)
+
                         loops = Contour(evaluated_item, mini.z, cut_wm).get_loops()
 
+                        loop_id = 0
                         for loop in loops.values():
                             coords = [cut_wm @ evaluated_item.data.vertices[vid].co for vid in loop]
 
                             points = ' '.join(['{x:.2f},{y:.2f}'.format(x=v.x, y=-v.y) for v in coords])
                             cut_type = POCKETING_CUT if mini.z > self.piece_min.z else INTERIOR_CUT
 
-                            svg += SVG_POLYGON.format(points=points, style=cut_type) + '\n'
+                            name = f"{evaluated_item.name}({cut_depth})"
+                            if loop_id > 0:
+                                name += f".{loop_id}"
+                            loop_id += 1
+
+                            svg += SVG_POLYGON.format(
+                                id=name,
+                                points=points,
+                                style=cut_type
+                            ) + '\n'
 
         return svg
+
+
+    def transformation(self, cut_obj=None) -> Matrix:
+
+        obj = cut_obj if cut_obj else self.piece
+
+        if self.piece.shaper_orientation == 'global':
+            return obj.matrix_world
+
+        elif self.piece.shaper_orientation == 'object' and self.piece.orientation_object:
+            rwm = self.piece.orientation_object.matrix_world.copy()
+            rwm.invert()
+            return rwm @ obj.matrix_world
+
+        else:
+            return Matrix()

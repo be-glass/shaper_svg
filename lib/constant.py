@@ -65,9 +65,9 @@ xml:space="preserve" style="background-color:#d0d0d0" stroke-width="1%"
 width="{width:.2f}{unit}" height="{height:.2f}{unit}"          
 viewBox="{x0:.2f} {y0:.2f} {w:.2f} {h:.2f}">
 '''
-SVG_RECTANGLE = '<rect x="{x}" y="{y}" width="{width:.2f}" height="{height:.2f}" style="{style}" />'
-SVG_POLYGON = '<polygon points="{points}" style="{style}" />'
-SVG_LINE = '<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="{style}" />'
+SVG_RECTANGLE = '<rect id="{id}" x="{x}" y="{y}" width="{width:.2f}" height="{height:.2f}" style="{style}" />'
+SVG_POLYGON = '<polygon id="{id}" points="{points}" style="{style}" />'
+SVG_LINE = '<line id="{id}" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="{style}" />'
 
 STYLE_GUIDE = "stroke:blue;fill:none"
 STYLE_CUT = "stroke:purple;fill:none"
