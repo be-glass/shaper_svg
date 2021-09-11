@@ -12,8 +12,7 @@
 #
 #  You should have received a copy of the GNU General Public License
 #  along with Blender_Shaper_Origin.  If not, see <https://www.gnu.org/licenses/>.
-
-
+import os
 from typing import Union
 
 from .Contour import Contour
@@ -23,6 +22,14 @@ from ..__init__ import bl_info
 from .helper.other import write
 from .object_types.bounding import boundaries
 from mathutils import Matrix
+import bpy
+
+
+def get_directory():
+    path = bpy.path.abspath("//shaper_svg")
+    if not os.path.isdir(path):
+        os.mkdir(path)
+    return path
 
 
 class Export:
@@ -52,14 +59,31 @@ class Export:
         if self.piece.shaper_orientation == 'object' and not self.piece.orientation_object:
             return "Orientation object missing"
 
-        svg_src = self.svg_top()
-        dir_name = "."
-        # file_name = f'{dir_name}/{name}.svg'
-        file_name = f'{dir_name}/shaper.svg'
+        if not bpy.data.is_saved:
+            return "Please save blend file to define project path!"
 
-        err = write(svg_src, file_name)
+        svg_src = self.svg_top()
+
+        path = get_directory()
+        if not os.path.isdir(path):
+            return f"Cannot create directory {path}!"
+
+        err = write(svg_src, self.get_filename(path))
 
         return err if err else False
+
+    def get_filename(self, path) -> object:
+
+        blend = bpy.path.display_name_from_filepath(bpy.data.filepath)
+
+        if self.piece.shaper_orientation == 'object' and self.piece.orientation_object:
+            orientation = '_'+self.piece.orientation_object.name
+        elif self.piece.shaper_orientation == 'local':
+            orientation = '_local'
+        else:
+            orientation = ''
+
+        return os.path.join(path, f"{blend}_{self.piece.name}{orientation}.svg")
 
     def svg_top(self) -> str:
         return '\n'.join([
