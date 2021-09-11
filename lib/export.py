@@ -30,6 +30,9 @@ class Export:
     def __init__(self, context) -> None:
 
         self.context = context
+        if not context.active_object:
+            return
+
         self.piece = context.active_object
         self.version = '.'.join([str(i) for i in bl_info['version']])
         self.unit = LENGTH_UNIT
@@ -42,6 +45,9 @@ class Export:
         self.tick = (self.w + self.h) / 20
 
     def run(self) -> Union[str, bool]:
+
+        if not self.context.active_object:
+            return "There is no active object."
 
         if self.piece.shaper_orientation == 'object' and not self.piece.orientation_object:
             return "Orientation object missing"
@@ -132,6 +138,7 @@ class Export:
     def svg_interior_loops(self) -> str:
 
         svg = ""
+        dg = self.context.evaluated_depsgraph_get()
 
         for modifier in self.piece.modifiers:
             if modifier.type == 'BOOLEAN' \
@@ -152,16 +159,17 @@ class Export:
 
                 for cut_item in cut_items:
 
-                    cut_wm = self.transformation(cut_obj=cut_item)
+                    evaluated_item = cut_item.evaluated_get(dg)
+                    cut_wm = self.transformation(cut_obj=evaluated_item)
 
-                    mini, maxi = boundaries(self.context, cut_item, cut_wm)
+                    mini, maxi = boundaries(self.context, evaluated_item, cut_wm)
 
                     if mini.z < self.piece_max.z < maxi.z:
 
-                        loops = Contour(cut_item, mini.z, cut_wm).get_loops()
+                        loops = Contour(evaluated_item, mini.z, cut_wm).get_loops()
 
                         for loop in loops.values():
-                            coords = [cut_wm @ cut_item.data.vertices[vid].co for vid in loop]
+                            coords = [cut_wm @ evaluated_item.data.vertices[vid].co for vid in loop]
 
                             points = ' '.join(['{x:.2f},{y:.2f}'.format(x=v.x, y=-v.y) for v in coords])
                             cut_type = POCKETING_CUT if mini.z > self.piece_min.z else INTERIOR_CUT
