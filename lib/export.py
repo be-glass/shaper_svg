@@ -39,7 +39,7 @@ class Export:
         self.piece_min, self.piece_max = boundaries(context, self.piece, self.piece_wm)
         self.w = (self.piece_max.x - self.piece_min.x)
         self.h = (self.piece_max.y - self.piece_min.y)
-        self.tick = (self.w+self.h)/20
+        self.tick = (self.w + self.h) / 20
 
     def run(self) -> Union[str, bool]:
 
@@ -65,14 +65,13 @@ class Export:
         ])
 
     def svg_header(self) -> str:
-        x = self.piece_min.x-self.tick
-        y = -self.piece_max.y-self.tick
+        x = self.piece_min.x - self.tick
+        y = -self.piece_max.y - self.tick
         w = self.w + 2 * self.tick
         h = self.h + 2 * self.tick
 
-
         return SVG_HEADER.format(
-            x0=x, w=self.w+2*self.tick, y0=y, h=self.h+2*self.tick,
+            x0=x, w=self.w + 2 * self.tick, y0=y, h=self.h + 2 * self.tick,
             width=w, height=h, unit=self.unit,
             version=self.version, author=bl_info['author'],
         )
@@ -88,8 +87,8 @@ class Export:
                 style=STROKE_BLUE,
             ) + \
             SVG_LINE.format(
-                x1=self.piece_min.x-self.tick,
-                x2=self.piece_max.x+self.tick,
+                x1=self.piece_min.x - self.tick,
+                x2=self.piece_max.x + self.tick,
                 y1=0,
                 y2=0,
                 style=STROKE_RED
@@ -97,8 +96,8 @@ class Export:
             SVG_LINE.format(
                 x1=0,
                 x2=0,
-                y1=-self.piece_min.y+self.tick,
-                y2=-self.piece_max.y-self.tick,
+                y1=-self.piece_min.y + self.tick,
+                y2=-self.piece_max.y - self.tick,
                 style=STROKE_GREEN
             )
 
@@ -136,28 +135,37 @@ class Export:
 
         for modifier in self.piece.modifiers:
             if modifier.type == 'BOOLEAN' \
-                    and modifier.operation == 'DIFFERENCE' \
-                    and modifier.operand_type == 'OBJECT' \
-                    and modifier.object:
+                    and modifier.operation == 'DIFFERENCE':
 
-                cut_item = modifier.object
-                cut_wm = self.transformation(cut_obj=cut_item)
+                if modifier.operand_type == 'OBJECT' \
+                        and modifier.object:
 
-                mini, maxi = boundaries(self.context, cut_item, cut_wm)
+                    cut_items = [modifier.object]
 
-                if mini.z < self.piece_max.z < maxi.z:
+                elif modifier.operand_type == 'COLLECTION' \
+                        and modifier.collection:
 
-                    loops = Contour(cut_item, mini.z, cut_wm).get_loops()
+                    cut_items = modifier.collection.objects
 
-                    for loop in loops.values():
-                        coords = [cut_wm @ cut_item.data.vertices[vid].co for vid in loop]
+                else:
+                    return svg
 
-                        points = ' '.join(['{x:.2f},{y:.2f}'.format(x=v.x, y=-v.y) for v in coords])
-                        cut_type = POCKETING_CUT if mini.z > self.piece_min.z else INTERIOR_CUT
+                for cut_item in cut_items:
 
-                        svg += SVG_POLYGON.format(points=points, style=cut_type) + '\n'
+                    cut_wm = self.transformation(cut_obj=cut_item)
+
+                    mini, maxi = boundaries(self.context, cut_item, cut_wm)
+
+                    if mini.z < self.piece_max.z < maxi.z:
+
+                        loops = Contour(cut_item, mini.z, cut_wm).get_loops()
+
+                        for loop in loops.values():
+                            coords = [cut_wm @ cut_item.data.vertices[vid].co for vid in loop]
+
+                            points = ' '.join(['{x:.2f},{y:.2f}'.format(x=v.x, y=-v.y) for v in coords])
+                            cut_type = POCKETING_CUT if mini.z > self.piece_min.z else INTERIOR_CUT
+
+                            svg += SVG_POLYGON.format(points=points, style=cut_type) + '\n'
 
         return svg
-
-
-
