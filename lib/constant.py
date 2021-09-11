@@ -18,45 +18,7 @@ LENGTH_UNIT = "mm"
 PRECISION = 3
 TOLERANCE = 10 ** -PRECISION
 
-# FACE_COLOR = {
-#     'Cutout': (1, 1, 1, 1),
-#     'Perimeter': (0, 0, 0, 1),
-#     'Pocket': (.5, .5, .5, 1),
-#     'GuideArea': (0, 0, 1, 1),
-#     'GuidePath': (0, 0, 1, 1),
-#     'Exterior': (0, 1, 1, 1),
-#     'Online': (1, 0, 1, 1),
-#     'Interior': (1, 1, 0, 1),
-# }
-#
-# STACK_Z = {
-#     'GuidePath': 7,
-#     'Interior': 6,
-#     'Exterior': 5,
-#     'Online': 4,
-#     'Cutout': 3,
-#     'Pocket': 2,
-#     'GuideArea': 1,
-#     'Perimeter': 0,
-# }
-# PREVIEW_STACK_DELTA = "0.1 mm"
-#
-# SO_CUT_ENCODING = {'Interior': ('black', 'white'),
-#                    'Exterior': ('black', 'black'),
-#                    'Online': ('grey', 'none'),
-#                    'Pocket': ('none', 'grey'),
-#                    'Guide': ('blue', 'blue')
-#                    }
-#
-# SVG_COORD_FORMAT = '{:.2f} {:.2f}'
-#
-# DEFAULTS = {
-#     'cut_depth': ['0', '18 mm', '50 mm'],
-#     'tool_diameter': ['0.1 mm', '3 mm', '25 mm'],
-# }
-#
-# FILLET_RESOLUTION = 8
-#
+
 SVG_HEADER = '''\
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Blender SVG Export by {author} v{version})  -->
@@ -73,35 +35,11 @@ SVG_PATH = '<path id="{id}" d="M{points}Z" style="{style}" />'
 
 SVG_PATH = '<path fill="{fill}" stroke="{stroke}" d="M{points}Z" />'
 
-
 SVG_LINE = '<line id="{id}" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="{style}" />'
 
-# STYLE_GUIDE = "stroke:blue;fill:none"
-# STYLE_CUT = "stroke:purple;fill:none"
-# STROKE_RED = "stroke:#ff0000;fill:none"
-# STROKE_GREEN = "stroke:#00ff00;fill:none"
-# STROKE_BLUE = "stroke:#0000ff;fill:none"
-#
-# EXTERIOR_CUT = "stroke:#000000;fill:#000000"
-# INTERIOR_CUT = "stroke:#000000;fill:#ffffff"
-# POCKETING_CUT = "fill:#7f7f7f;stroke:None"
-
-RED="#ff0000"
-GREEN="#00ff00"
-BLUE="#0000ff"
-GREY="#7f7f7f"
-BLACK="#000000"
-WHITE="#ffffff"
-
-
-
-
-SHAPER_MAX_DEPTH = 30.0 # mm
-
-# STYLE_GUIDE = "fill:blue"
-
-
-#
-# PREFIX = "SOC_"
-#
-# ALIGNMENT_Z_OFFSET = 0.1
+RED = "#ff0000"
+GREEN = "#00ff00"
+BLUE = "#0000ff"
+GREY = "#7f7f7f"
+BLACK = "#000000"
+WHITE = "#ffffff"

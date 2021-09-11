@@ -12,13 +12,14 @@
 #
 #  You should have received a copy of the GNU General Public License
 #  along with Blender_Shaper_Origin.  If not, see <https://www.gnu.org/licenses/>.
+
+
 import os
 from typing import Union
 
 from .Contour import Contour
 from .constant import SVG_HEADER, SVG_RECTANGLE, LENGTH_UNIT, SVG_PATH, SVG_LINE, \
     SVG_FOOTER, RED, GREEN, BLUE, BLACK, GREY, WHITE
-# STROKE_BLUE, STROKE_RED, STROKE_GREEN, SHAPER_MAX_DEPTH, EXTERIOR_CUT, INTERIOR_CUT, POCKETING_CUT, \
 from ..__init__ import bl_info
 from .helper.other import write
 from .object_types.bounding import boundaries
@@ -78,7 +79,7 @@ class Export:
         blend = bpy.path.display_name_from_filepath(bpy.data.filepath)
 
         if self.piece.shaper_orientation == 'object' and self.piece.orientation_object:
-            orientation = '_'+self.piece.orientation_object.name
+            orientation = '_' + self.piece.orientation_object.name
         elif self.piece.shaper_orientation == 'local':
             orientation = '_local'
         else:
@@ -114,35 +115,10 @@ class Export:
     def svg_origin(self) -> str:
         return SVG_PATH.format(
             id='origin',
-            points=f"0,0 {self.tick},0 0,{-2*self.tick}",
+            points=f"0,0 {self.tick},0 0,{-2 * self.tick}",
             fill=RED,
             stroke=RED
         )
-
-    # def svg_boundary_guide(self) -> str:
-    #     return \
-    #         SVG_RECTANGLE.format(
-    #             id='boundary',
-    #             x=self.piece_min.x, y=-self.piece_max.y,
-    #             width=self.w, height=self.h,
-    #             style=STROKE_BLUE,
-    #         ) + \
-    #         SVG_LINE.format(
-    #             id='x-axis',
-    #             x1=self.piece_min.x - self.tick,
-    #             x2=self.piece_max.x + self.tick,
-    #             y1=0,
-    #             y2=0,
-    #             style=STROKE_RED
-    #         ) + \
-    #         SVG_LINE.format(
-    #             id='y-axis',
-    #             x1=0,
-    #             x2=0,
-    #             y1=-self.piece_min.y + self.tick,
-    #             y2=-self.piece_max.y - self.tick,
-    #             style=STROKE_GREEN
-    #         )
 
     def svg_exterior_loops(self) -> str:
 
@@ -161,7 +137,6 @@ class Export:
             fill=BLACK,
             stroke=BLACK
         ) for points in points])
-
 
     def svg_interior_loops(self) -> str:
 
@@ -204,10 +179,10 @@ class Export:
 
                             points = ' '.join(['{x:.2f},{y:.2f}'.format(x=v.x, y=-v.y) for v in coords])
 
-                            if mini.z > self.piece_min.z:   # POCKETING CUT
+                            if mini.z > self.piece_min.z:  # POCKETING CUT
                                 fill = GREY
                                 stroke = GREY
-                            else:   # INTERIOR CUT
+                            else:  # INTERIOR CUT
                                 fill = WHITE
                                 stroke = BLACK
 
@@ -224,7 +199,6 @@ class Export:
                             ) + '\n'
 
         return svg
-
 
     def transformation(self, cut_obj=None) -> Matrix:
 

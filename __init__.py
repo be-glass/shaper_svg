@@ -24,15 +24,15 @@ bl_info = {
     "version": (0, 1, 0),
     "location": "3D View > Sidebar",
     "description": "SVG Export for Shaper Origin cutting lines",
-    # "wiki_url": "https://docs.blender.org/manual/en/dev/addons/mesh/3d_print_toolbox.html",
-    # "support": 'OFFICIAL',
     "category": "Mesh",
 }
 
 files = [ui, properties, operators]
 
+
 def register() -> None:
     [file.register() for file in files]
+
 
 def unregister() -> None:
     [file.unregister() for file in files]

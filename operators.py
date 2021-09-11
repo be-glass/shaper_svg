@@ -20,19 +20,21 @@ from typing import List, Type, Set
 from .lib.export import Export
 
 
-
 def operators() -> List[Type[Operator]]:
     return [
         MESH_OT_shaper_export_svg,
     ]
 
+
 def register() -> None:
     for widget in operators():
         register_class(widget)
 
+
 def unregister() -> None:
     for widget in operators():
         unregister_class(widget)
+
 
 class MESH_OT_shaper_export_svg(Operator):
     bl_idname = "mesh.shaper_export_svg"
@@ -52,4 +54,3 @@ class MESH_OT_shaper_export_svg(Operator):
         else:
             self.report({'ERROR'}, "Export Failed")
             return {'CANCELLED'}
-

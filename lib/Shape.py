@@ -15,6 +15,7 @@
 
 from typing import List
 
+
 class Shape(list):
 
     def clean(self):
@@ -22,12 +23,12 @@ class Shape(list):
         shape = self
         shape1 = Shape([])
         for i in shape.range():
-            if shape.mod(i-1) != shape.mod(i+1):
+            if shape.mod(i - 1) != shape.mod(i + 1):
                 shape1.append(shape[i])
 
         shape2 = Shape([])
         for i in shape1.range():
-            if shape1[i] != shape1.mod(i+1):
+            if shape1[i] != shape1.mod(i + 1):
                 shape2.append(shape1[i])
 
         return shape2

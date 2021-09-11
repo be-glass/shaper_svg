@@ -18,11 +18,6 @@ import bpy
 from bpy.props import EnumProperty, StringProperty, PointerProperty
 from bpy.types import PropertyGroup, Object
 
-# FloatProperty, BoolProperty, StringProperty, EnumProperty,
-
-
-# Initialization
-
 
 def register() -> None:
     pass
@@ -36,6 +31,7 @@ def register() -> None:
     btO.shaper_orientation = oP.orientation
     btO.orientation_object = oP.orientation_object
 
+
 def unregister() -> None:
     pass
 
@@ -46,13 +42,7 @@ def unregister() -> None:
     del btO.orientation_object
 
 
-
-
-# Definition
-
-
 class ObjectProperties(PropertyGroup):
-
     orientation = EnumProperty(
         name="Orientation",
         description="SO curve cut type",
@@ -63,178 +53,8 @@ class ObjectProperties(PropertyGroup):
         default='global',
     )
 
-
     orientation_object = PointerProperty(
         name="from",
         description="Orientation from Object",
         type=Object,
     )
-
-
-
-
-#     cut_depth = FloatProperty(
-#         name="Cut Depth",
-#         description="Cut depth (mm)",
-#         default=0,
-#         min=0,
-#         max=float('inf'),
-#         unit='LENGTH',
-#         update=handler.update_cut_depth
-#     )
-#
-#     tool_diameter = FloatProperty(
-#         name="Tool Diameter",
-#         description="Tool diameter (mm)",
-#         default=0,
-#         min=0,
-#         max=float('inf'),
-#         unit='LENGTH',
-#         update=handler.update_tool_diameter
-#     )
-#
-#     reference_frame = EnumProperty(
-#         name="Reference",
-#         description="Reference",
-#         items=[('global', "Global", "global Reference", "", 0),
-#                ('local', "Local", "local Reference", "", 1),
-#                ],
-#         default='global',
-#         options={'HIDDEN'},
-#     )
-#
-#     curve_cut_type = EnumProperty(
-#         name="Cut Type",
-#         description="SO curve cut type",
-#         items=[('None', 'None', 'No Cut', '', 0),
-#                ('Exterior', 'Exterior', 'Exterior Cut', '', 2),
-#                ('Interior', 'Interior', 'Interior Cut', '', 4),
-#                ('Online', 'On Line', 'On Line Cut', '', 6),
-#                ('GuidePath', 'Guide Path', '', 'Guide Path', 7),
-#                ],
-#
-#         default='None',
-#         options={'HIDDEN'},
-#         update=handler.update_cut_type
-#     )
-#     mesh_cut_type = EnumProperty(
-#         name="Cut Type",
-#         description="SO mesh cut type",
-#         items=[('None', 'None', 'No Cut', '', 0),
-#                ('Perimeter', 'Perimeter', "Defines the outer perimeter of work piece", 1),
-#                ('Cutout', 'Cutout', 'Cutout', 3),
-#                ('Pocket', 'Pocketing', 'Pocketing', '', 5),
-#                ('GuideArea', 'Guide Area', '', 'Guide Area', 7),
-#                ],
-#
-#         default='None',
-#         options={'HIDDEN'},
-#         update=handler.update_cut_type
-#     )
-#     object_type = EnumProperty(
-#         name="Object Type",
-#         description="SO object type",
-#         items=[('None', 'None', 'None', '', 0),
-#                ('Cut', 'Cut', "Cut", 1),
-#                ('Preview', 'Preview', 'Preview', 2),
-#                ('Reference', 'Reference', 'Reference', '', 3),
-#                ('Bounding', 'Bounding', 'Bounding', '', 4),
-#                ('Helper', 'Helper', 'Helper', '', 5),
-#                ('Proxy', 'Proxy', 'Proxy', '', 6),
-#                ('Solid', 'Solid', 'Solid', '', 7),
-#                ],
-#
-#         default='None',
-#         options={'HIDDEN'},
-#     )
-#     simulate = BoolProperty(
-#         name="Simulate cut",
-#         description="Simulate cut",
-#         default=True,
-#         options={'HIDDEN'},
-#         update=handler.update_cut_type
-#     )
-#     initialized = BoolProperty(
-#         name="Object initialized",
-#         description="Object is initialized (for internal use)",
-#         default=False,
-#         options={'HIDDEN'},
-#     )
-#     suppress_next_update = BoolProperty(
-#         name="Suppress next update",
-#         description="Inhibits next update interrupt (for internal use)",
-#         default=False,
-#     )
-#     dogbone = BoolProperty(
-#         name="Dogbone Fillets",
-#         description="Add dogbone fillets to cut",
-#         default=False,
-#         options={'HIDDEN'},
-#         update=handler.update_cut_type
-#     )
-#     solid_name = StringProperty(
-#         name="Solid Mesh Name",
-#         description="Internal record of solid name",
-#         default="",
-#     )
-#     preview_name = StringProperty(
-#         name="Preview Object Name",
-#         description="Internal record of preview object name",
-#         default="",
-#     )
-#     reference_name = StringProperty(
-#         name="Reference Name",
-#         description="Internal record of reference object name",
-#         default="",
-#     )
-#     bevel_name = StringProperty(
-#         name="Bevel Name",
-#         description="Internal record of bevel helper object name",
-#         default="",
-#     )
-#     known_as = StringProperty(
-#         name="Known as",
-#         description="Internal record of object association",
-#         default="",
-#     )
-#
-#
-# class SceneProperties(PropertyGroup):
-#     selected_only: BoolProperty(
-#         name="Selected Only",
-#         description="Export only selected objects",
-#         default=False,
-#         options={'HIDDEN'},
-#     )
-#     separate_files: BoolProperty(
-#         name="Separate Files",
-#         description="Export each shape in a separate file",
-#         default=False,
-#         options={'HIDDEN'},
-#     )
-#     preview: BoolProperty(
-#         name="Preview",
-#         description="Preview export in X-Y-plane",
-#         default=False,
-#         options={'HIDDEN'},
-#         update=handler.preview
-#     )
-#     export_path: StringProperty(
-#         name="Export Directory",
-#         description="Path to directory where the files are created",
-#         default="//",
-#         maxlen=1024,
-#         subtype="DIR_PATH",
-#         options={'HIDDEN'},
-#     )
-#     pre_obj: PointerProperty(
-#         name="Pre Update Object",
-#         description="Last active object when depsgraph_pre_update was called",
-#         options={'HIDDEN'},
-#         type=Object,
-#     )
-#     pre_obj_name: StringProperty(
-#         name="Pre Update Object Name",
-#         description="Name of last active object when depsgraph_pre_update was called",
-#         options={'HIDDEN'},
-#     )

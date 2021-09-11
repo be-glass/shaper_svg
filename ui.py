@@ -17,8 +17,6 @@ from bpy import utils
 from bpy.types import Panel
 from typing import List, Type
 
-# from .lib.blender.compartment import Compartment
-
 
 def panels() -> List[Type[Panel]]:
     return [
@@ -50,7 +48,6 @@ class BG_PT_Shaper_SVG(Shaper_Panel):
         layout.use_property_split = True
         layout.use_property_decorate = True
 
-        # soc = context.scene.so_cut
         obj = context.object
 
         if obj and obj.type != 'MESH':
